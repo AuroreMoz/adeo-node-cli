@@ -16,7 +16,7 @@ function getFilteredPeople(people = [], filter){
 }
 
 function getFilteredAnimals(animals = [], filter) {
-    return animals.filter((animal => animal.name.match(new RegExp(filter))));
+    return animals.filter((animal => animal.name.match(filter)));
 }
 
 module.exports = {

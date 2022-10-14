@@ -2,7 +2,6 @@ const {runAction} = require('./app');
 const filter = require('./actions/filter');
 const help = require('./actions/help');
 
-
 jest.mock('./actions/help');
 jest.mock('./actions/filter');
 jest.mock('./data/data', () => ({data: []}));
@@ -37,20 +36,28 @@ describe('app runAction: filter', () => {
         expect(result).toMatch(/YOU NEED TO DEFINE A VALUE/);
     });
 
+    test('when --filter with bad pattern, print bad pattern error', () => {
+        filter.getFilteredData.mockImplementation(() => [])
+        const result = runAction(['--filter', '*'])
+        expect(filter.getFilteredData).toHaveBeenCalledTimes(0);
+        expect(result).toEqual('BAD PATTERN. NEED TO BE A REGULAR EXPRESSION');
+    });
+
     test('when --filter without result, print message no data', () => {
         filter.getFilteredData.mockImplementation(() => [])
         const result = runAction(['--filter', 'foo'])
         expect(filter.getFilteredData).toHaveBeenCalledTimes(1);
-        expect(filter.getFilteredData).toHaveBeenCalledWith([], 'foo');
+        expect(filter.getFilteredData).toHaveBeenCalledWith([], new RegExp('foo'));
         expect(result).toEqual('NO DATA');
 
     });
+
     test('when --filter with result, print result', () => {
         filter.getFilteredData.mockImplementation(() => 'bar')
         const result = runAction(['--filter', 'foo'])
         expect(filter.getFilteredData).toHaveBeenCalledTimes(1);
-        expect(filter.getFilteredData).toHaveBeenCalledWith([], 'foo');
-        expect(result).toEqual('bar');
+        expect(filter.getFilteredData).toHaveBeenCalledWith([], new RegExp('foo'));
+        expect(result).toEqual('"bar"');
     });
 });
 
@@ -61,7 +68,9 @@ describe('app runAction: default', () => {
         expect(filter.getFilteredData).toHaveBeenCalledTimes(0);
         expect(result).toEqual('SORRY, NOTHING TO DO. TRY --help');
     });
-    test('when empty param, print sorry message', () => {        help.getHelp.mockImplementation(() => 'HELP')
+
+    test('when empty param, print sorry message', () => {
+        help.getHelp.mockImplementation(() => 'HELP')
         const result = runAction([''])
         expect(filter.getFilteredData).toHaveBeenCalledTimes(0);
         expect(result).toEqual('SORRY, NOTHING TO DO. TRY --help');

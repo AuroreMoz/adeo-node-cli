@@ -7,22 +7,26 @@ const actionToExecute = process.argv.length === 3 ? process.argv[2].split('=') :
 
 print(runAction(actionToExecute));
 
-
 function runAction(action) {
     switch(action[0]){
         case '--filter':
             if(!action[1]){
                 return 'YOU NEED TO DEFINE A VALUE: --filter=value';
             } else {
-                const filteredData = getFilteredData(data, action[1]);
-                if(!filteredData.length){
-                    return 'NO DATA'
-                } else {
-                    return filteredData;
+                try {
+                    const filter = new RegExp(action[1]);
+                    const filteredData = getFilteredData(data, filter);
+                    if(!filteredData.length){
+                        return 'NO DATA'
+                    } else {
+                        return JSON.stringify(filteredData, null, 2);
+                    }
+                } catch (SyntaxError){
+                    return 'BAD PATTERN. NEED TO BE A REGULAR EXPRESSION'
                 }
             }
         case '--count':
-            return getWithCounters(data);
+            return JSON.stringify(getWithCounters(data), null, 2);
         case '--help':
             return getHelp();
         default:
@@ -31,7 +35,7 @@ function runAction(action) {
 }
 
 function print(message) {
-    console.log(JSON.stringify(message, null, 2));
+    console.log(message);
 }
 
 module.exports = {
