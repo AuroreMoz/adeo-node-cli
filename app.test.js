@@ -7,11 +7,6 @@ jest.mock('./actions/help');
 jest.mock('./actions/filter');
 jest.mock('./data/data', () => ({data: []}));
 
-beforeEach(()=>{
-    console.log = jest.fn();
-
-})
-
 afterEach(() => {
     help.getHelp.mockReset();
     filter.getFilteredData.mockReset();
@@ -28,51 +23,47 @@ describe('app runAction: help', () => {
 
     test('when --help, print call with help', () => {
         help.getHelp.mockImplementation(() => 'HELP')
-        runAction(['--help'])
+        const result = runAction(['--help'])
         expect(help.getHelp).toHaveBeenCalledTimes(1);
-        expect(console.log).toHaveBeenCalledTimes(1);
-        expect(console.log).toHaveBeenCalledWith('HELP');
+        expect(result).toEqual('HELP');
     });
 });
 
 describe('app runAction: filter', () => {
 
     test('when --filter without value, print message to define value', () => {
-        runAction(['--filter'])
+        const result = runAction(['--filter'])
         expect(filter.getFilteredData).toHaveBeenCalledTimes(0);
-        expect(console.log).toHaveBeenCalledTimes(1);
-        expect(console.log).toHaveBeenCalledWith(expect.stringContaining('YOU NEED TO DEFINE A VALUE'));
+        expect(result).toMatch(/YOU NEED TO DEFINE A VALUE/);
     });
+
     test('when --filter without result, print message no data', () => {
         filter.getFilteredData.mockImplementation(() => [])
-        runAction(['--filter', 'foo'])
+        const result = runAction(['--filter', 'foo'])
         expect(filter.getFilteredData).toHaveBeenCalledTimes(1);
         expect(filter.getFilteredData).toHaveBeenCalledWith([], 'foo');
-        expect(console.log).toHaveBeenCalledTimes(1);
-        expect(console.log).toHaveBeenCalledWith('NO DATA');
+        expect(result).toEqual('NO DATA');
+
     });
     test('when --filter with result, print result', () => {
         filter.getFilteredData.mockImplementation(() => 'bar')
-        runAction(['--filter', 'foo'])
+        const result = runAction(['--filter', 'foo'])
         expect(filter.getFilteredData).toHaveBeenCalledTimes(1);
         expect(filter.getFilteredData).toHaveBeenCalledWith([], 'foo');
-        expect(console.log).toHaveBeenCalledTimes(1);
-        expect(console.log).toHaveBeenCalledWith('"bar"');
+        expect(result).toEqual('bar');
     });
 });
 
 describe('app runAction: default', () => {
     test('when unknown param, print sorry message', () => {
         help.getHelp.mockImplementation(() => 'HELP')
-        runAction(['--unknown'])
+        const result = runAction(['--unknown'])
         expect(filter.getFilteredData).toHaveBeenCalledTimes(0);
-        expect(console.log).toHaveBeenCalledTimes(1);
-        expect(console.log).toHaveBeenCalledWith('SORRY, NOTHING TO DO. TRY --help');
+        expect(result).toEqual('SORRY, NOTHING TO DO. TRY --help');
     });
     test('when empty param, print sorry message', () => {        help.getHelp.mockImplementation(() => 'HELP')
-        runAction([''])
+        const result = runAction([''])
         expect(filter.getFilteredData).toHaveBeenCalledTimes(0);
-        expect(console.log).toHaveBeenCalledTimes(1);
-        expect(console.log).toHaveBeenCalledWith('SORRY, NOTHING TO DO. TRY --help');
+        expect(result).toEqual('SORRY, NOTHING TO DO. TRY --help');
     });
 });
