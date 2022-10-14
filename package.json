@@ -4,7 +4,7 @@
   "description": "adeo-node-cli is a command line interface allowing to perform different actions on a list of data, corresponding to `Countries` containing `Peoples` containing `Animals`.",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/AuroreMoz/adeo-node-cli/issues"
   },
-  "homepage": "https://github.com/AuroreMoz/adeo-node-cli#readme"
+  "homepage": "https://github.com/AuroreMoz/adeo-node-cli#readme",
+  "devDependencies": {
+    "jest": "^29.1.2"
+  }
 }
