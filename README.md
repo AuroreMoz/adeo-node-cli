@@ -5,4 +5,18 @@ adeo-node-cli is a command line interface allowing to perform different actions 
 Data are available in the `data.js` file.
 
 ## Available actions
-NO AVAILABLE ACTION
+
+### --help
+print help for adeo-node-cli options
+Exemple:
+```
+node app.js --help
+```
+
+### --filter=pattern
+print countries, people and animals who only match the filter pattern value.
+the pattern can be a regular expression.
+Exemple:
+```
+node app.js --filter=ry$
+```
