@@ -1,35 +1,37 @@
 const {getHelp} = require('./actions/help');
 const {getFilteredData} = require('./actions/filter');
+const {getWithCounters} = require("./actions/count");
 const data = require('./data/data').data
 
 const actionToExecute = process.argv.length === 3 ? process.argv[2].split('=') : [''];
 
-runAction(actionToExecute);
+print(runAction(actionToExecute));
+
 
 function runAction(action) {
     switch(action[0]){
         case '--filter':
             if(!action[1]){
-                print('YOU NEED TO DEFINE A VALUE: --filter=value');
+                return 'YOU NEED TO DEFINE A VALUE: --filter=value';
             } else {
                 const filteredData = getFilteredData(data, action[1]);
                 if(!filteredData.length){
-                    print('NO DATA')
+                    return 'NO DATA'
                 } else {
-                    print(JSON.stringify(filteredData, null, 2));
+                    return filteredData;
                 }
             }
-            break;
+        case '--count':
+            return getWithCounters(data);
         case '--help':
-            print(getHelp());
-            break;
+            return getHelp();
         default:
-            print('SORRY, NOTHING TO DO. TRY --help');
+            return 'SORRY, NOTHING TO DO. TRY --help';
     }
 }
 
 function print(message) {
-    console.log(message);
+    console.log(JSON.stringify(message, null, 2));
 }
 
 module.exports = {
